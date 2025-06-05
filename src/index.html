@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="icon" href="favicon.png" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <title>Story App</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="app-header">
+      <div class="app-header__logo">
+        <img src="./images/logo.png" alt="Story App Logo" />
+        <h1>Story App</h1>
+      </div>
+      <nav class="app-header__navigation">
+        <ul>
+          <li><a href="#/home">Home</a></li>
+          <li><a href="#/add-story">Add Story</a></li>
+          <li id="auth-link-container"><a href="#/login">Login</a></li>
+          <li id="notification-li-container" style="display: none">
+            <button
+              id="subscribePushNotification"
+              class="button"
+              style="margin-left: 10px; padding: 5px 10px; display: none"
+            >
+              Subscribe
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="main-content" class="container"></main>
+
+    <footer>
+      <p>&copy; 2025 - Story App</p>
+    </footer>
+  </body>
+</html>
