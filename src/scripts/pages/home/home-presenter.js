@@ -6,54 +6,64 @@ class HomePresenter {
   constructor({ view, model }) {
     this._view = view;
     this._model = model;
+    this._stories = [];
     this._loadStories();
+    this._attachSaveButtonListeners();
   }
 
   async _loadStories() {
     this._view.showLoading();
-    let displayedFromCache = false;
-
-    try {
-      const cachedStories = await StoryDb.getAllStories();
-      if (cachedStories && cachedStories.length > 0) {
-        this._view.displayStories(cachedStories);
-        displayedFromCache = true;
-        console.log("Stories displayed from IndexedDB cache.");
-      }
-    } catch (dbError) {
-      console.error(
-        "HomePresenter Error: Failed to load stories from IndexedDB:",
-        dbError
-      );
-    }
-
     try {
       const storiesFromApi = await this._model.getAllStories();
+      this._stories = storiesFromApi;
 
       if (storiesFromApi && storiesFromApi.length > 0) {
-        this._view.displayStories(storiesFromApi);
-        await StoryDb.clearAllStories();
-        await StoryDb.putAllStories(storiesFromApi);
-        console.log("Stories fetched from API and updated in IndexedDB.");
-      } else if (!displayedFromCache) {
+        this._view.displayStories(
+          storiesFromApi.map((story) => ({ story, isSavedPage: false }))
+        );
+      } else {
         this._view.displayStories([]);
-        console.log("No stories from API and nothing in cache.");
       }
-    } catch (apiError) {
-      console.error(
-        "HomePresenter Error: Failed to load stories from API:",
-        apiError
-      );
-      if (!displayedFromCache) {
-        this._view.displayError(apiError.message || "Failed to fetch stories.");
-      }
-      Swal.fire({
-        icon: "error",
-        title: "Network Error",
-        text: `Failed to load stories from the server: ${apiError.message}. Displaying cached data if available.`,
-      });
+    } catch (error) {
     } finally {
       this._view.hideLoading();
+    }
+  }
+
+  _attachSaveButtonListeners() {
+    const storyListContainer = document.querySelector("#story-list");
+    if (storyListContainer) {
+      storyListContainer.addEventListener("click", async (event) => {
+        const saveButton = event.target.closest(".save-button");
+        if (saveButton) {
+          const storyId = saveButton.dataset.id;
+          await this._handleSaveStory(storyId);
+
+          saveButton.textContent = "Tersimpan";
+          saveButton.disabled = true;
+          saveButton.classList.remove("button");
+          saveButton.classList.add("button-success");
+        }
+      });
+    }
+  }
+
+  async _handleSaveStory(id) {
+    const storyToSave = this._stories.find((story) => story.id === id);
+    if (storyToSave) {
+      try {
+        await StoryDb.putStory(storyToSave);
+        Swal.fire(
+          "Berhasil!",
+          "Cerita telah disimpan untuk akses offline.",
+          "success"
+        );
+      } catch (error) {
+        console.error("Failed to save story to IndexedDB:", error);
+        Swal.fire("Error", "Gagal menyimpan cerita.", "error");
+      }
+    } else {
+      console.warn("Story with id not found to save:", id);
     }
   }
 }

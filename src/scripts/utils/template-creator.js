@@ -9,14 +9,11 @@ const storyMarkerIcon = L.icon({
   popupAnchor: [0, -32],
 });
 
-const createStoryItemTemplate = (story) => `
+const createStoryItemTemplate = ({ story, isSavedPage = false }) => `
   <article class="story-item">
     <img class="story-item__image" src="${
       story.photoUrl
-    }" alt="Story image from ${story.name}: ${story.description.substring(
-  0,
-  50
-)}..." loading="lazy">
+    }" alt="Story image from ${story.name}" loading="lazy">
     <div class="story-item__content">
       <h3 class="story-item__title">${story.name}</h3>
       <p class="story-item__description">${story.description}</p>
@@ -37,6 +34,13 @@ const createStoryItemTemplate = (story) => `
           ? `<div id="map-${story.id}" class="story-item__map-container"></div>`
           : ""
       }
+      <div class="story-item__actions" style="margin-top: 15px;">
+        ${
+          isSavedPage
+            ? `<button class="button button-danger remove-button" data-id="${story.id}">Hapus dari Daftar</button>`
+            : `<button class="button save-button" data-id="${story.id}">Simpan Offline</button>`
+        }
+      </div>
     </div>
   </article>
 `;

@@ -34,21 +34,19 @@ class HomeView {
 
   hideLoading() {}
 
-  displayStories(stories) {
+  displayStories(storiesData) {
     if (!this.storyListContainer) {
-      console.error(
-        "HomeView Error: Story list container not available to display stories."
-      );
+      console.error("HomeView Error: Story list container not available.");
       return;
     }
     this.storyListContainer.innerHTML = "";
 
-    if (stories && stories.length > 0) {
-      stories.forEach((story) => {
-        this.storyListContainer.innerHTML += createStoryItemTemplate(story);
+    if (storiesData && storiesData.length > 0) {
+      storiesData.forEach((data) => {
+        this.storyListContainer.innerHTML += createStoryItemTemplate(data);
       });
 
-      stories.forEach((story) => {
+      storiesData.forEach(({ story }) => {
         if (story.lat && story.lon) {
           setTimeout(() => initMapOnStoryItem(story), 0);
         }
